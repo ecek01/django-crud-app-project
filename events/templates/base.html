@@ -1,39 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- FullCalendar CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
-
-<!-- FullCalendar JS -->
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js"></script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendar To-Do App</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FullCalendar CSS (✅ Make sure this is included) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Custom Styles -->
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        nav { background: #eee; padding: 10px; margin-bottom: 20px; }
-        nav a { margin-right: 15px; text-decoration: none; font-weight: bold; }
+        :root {
+            --primary-color: #FFBA74;  /* Pink Theme */
+            --secondary-color: #FFD166;
+            --bg-color: #FFD3A6;
+            --text-color: #333;
+            --event-bg: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+        }
+
+        .navbar {
+            background: var(--primary-color);
+            padding: 12px;
+            border-radius: 0px 0px 15px 15px;
+        }
+
+        .navbar a {
+            color: white;
+            margin-right: 20px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .btn-custom {
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        .event-details {
+            background: var(--event-bg);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .rounded-card {
+            border-radius: 15px;
+            padding: 15px;
+            background: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;  /* ✅ Added spacing between "Welcome, [user]" and Logout */
+        }
+
+        .btn-custom {
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        color: var(--primary-color) !important;  /* ✅ Make text pink */
+        border: 2px solid var(--primary-color);  /* ✅ Pink border */
+        background: white;  /* ✅ White background */
+    }
+
+    .btn-custom:hover {
+        background: var(--primary-color);  /* ✅ Pink background on hover */
+        color: white !important;  /* ✅ Text turns white on hover */
+    }
+
+        /* ✅ Keep Edit button yellow */
+        .btn-edit {
+        background-color: #FFD166 !important;  /* Yellow */
+        color: black !important;  /* Black text */
+        border-radius: 8px;
+        font-weight: bold;
+    }
+
+    .btn-edit:hover {
+        background-color: #E6B800 !important;  /* Darker yellow on hover */
+    }
+
+    /* ✅ Keep Delete button red */
+    .btn-delete {
+        background-color: #FF5733 !important;  /* Red */
+        color: white !important;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+
+    .btn-delete:hover {
+        background-color: #CC4422 !important;  /* Darker red on hover */
+    }
+
+    .text-orange {
+        color: #FFBA74 !important;  /* ✅ Softer Orange for Headers */
+    }
+
+    .text-soft-orange {
+        color: #FFD3A6 !important;  /* ✅ Light Orange for Event Titles & Important Info */
+        font-weight: bold;
+    }
+
     </style>
 </head>
 <body>
 
-<nav>
-    <a href="{% url 'event_list' %}">Home</a>
-    
-    {% if user.is_authenticated %}
-        <span>Welcome, {{ user.username }}</span>
-        <a href="{% url 'logout' %}">Logout</a>
-    {% else %}
-        <a href="{% url 'login' %}">Login</a>
-        <a href="{% url 'register' %}">Register</a>
-    {% endif %}
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand text-white" href="{% url 'event_list' %}">
+            <i class="fa-solid fa-calendar-days"></i> Calendar App
+        </a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item user-info">
+                        <span class="navbar-text text-soft-orange">Welcome, {{ user.username }}</span>
+                        <a class="btn btn-light btn-sm btn-custom" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="btn btn-light btn-sm btn-custom" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-light btn-sm btn-custom" href="{% url 'register' %}">Register</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
 </nav>
 
-{% block content %}
-<!-- Page content will go here -->
-{% endblock %}
+<!-- Page Content -->
+<div class="container mt-4">
+    {% block content %}
+    {% endblock %}
+</div>
+
+<!-- FullCalendar JS (✅ Ensures FullCalendar loads before usage) -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
