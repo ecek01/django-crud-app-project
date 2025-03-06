@@ -18,61 +18,75 @@
 
 <!-- FullCalendar Initialization Script -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-    
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            selectable: true,
-            events: '/events/api/',  // Fetch events from Django
-    
-            // Handle clicking on an empty date to add an event
-            dateClick: function(info) {
-                showEventForm(info.dateStr);
-            },
-    
-            // Handle clicking on an existing event to show details (not editable yet)
-            eventClick: function(info) {
-                showEventDetails(info.event);
-            }
-        });
-    
-        calendar.render();
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        selectable: true,
+        editable: true,  // ✅ Enable dragging & resizing
+        eventStartEditable: true,  // ✅ Allows changing event start date
+        eventDrop: function(info) {  // ✅ Triggers when event is moved
+            updateEventDate(info.event);
+        },
+        events: '/events/api/',  // ✅ Fetch events with colors
+        dateClick: function(info) {
+            showEventForm(info.dateStr);
+        },
+        eventClick: function(info) {
+            showEventDetails(info.event);
+        },
+        eventDidMount: function(info) {
+            info.el.style.backgroundColor = info.event.extendedProps.color;
+        }
     });
-    
-    // Function to show event creation form when clicking a date
-    function showEventForm(date) {
-        document.getElementById('event-form').innerHTML = `
-            <h3>Add Event on ${date}</h3>
-            <form method="POST" action="{% url 'event_create' %}">
-                {% csrf_token %}
-                <input type="hidden" name="date" value="${date}">
-                <label>Title:</label><br>
-                <input type="text" name="title" required><br>
-                <label>Time:</label><br>
-                <input type="time" name="time" required><br>
-                <label>Priority:</label><br>
-                <select name="priority">
-                    <option value="High">High</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Low">Low</option>
-                </select><br>
-                <label>Notes:</label><br>
-                <textarea name="notes" rows="3" cols="40"></textarea><br><br>
-                <button type="submit">Save</button>
-            </form>
-        `;
-    }
-    
-    // Function to show event details (without editing)
-    function showEventDetails(event) {
+
+    calendar.render();
+});
+
+// Function to show event creation form when clicking a date
+function showEventForm(date) {
+    document.getElementById('event-form').innerHTML = `
+        <h3>Add Event on ${date}</h3>
+        <form method="POST" action="{% url 'event_create' %}">
+            {% csrf_token %}
+            <input type="hidden" name="date" value="${date}">
+            <label>Title:</label><br>
+            <input type="text" name="title" required><br>
+            <label>Time:</label><br>
+            <input type="time" name="time" required><br>
+            <label>Priority:</label><br>
+            <select name="priority">
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select><br>
+            <label>Notes:</label><br>
+            <textarea name="notes" rows="3" cols="40"></textarea><br><br>
+            <label>Color:</label><br>
+            <select name="color">
+                <option value="#FF5733">Red</option>
+                <option value="#33FF57">Green</option>
+                <option value="#3357FF">Blue</option>
+                <option value="#FF33A8">Pink</option>
+                <option value="#FFC300">Yellow</option>
+                <option value="#A833FF">Purple</option>
+                <option value="#33FFF3">Cyan</option>
+            </select><br><br>
+            <button type="submit">Save</button>
+        </form>
+    `;
+}
+
+// Function to show event details (without editing)
+function showEventDetails(event) {
     document.getElementById('event-form').innerHTML = `
         <h3>${event.title}</h3>
         <p><strong>Date:</strong> ${event.start}</p>
         <p><strong>Time:</strong> ${event.extendedProps.time}</p>
         <p><strong>Priority:</strong> ${event.extendedProps.priority}</p>
         <p><strong>Notes:</strong> ${event.extendedProps.notes || 'No notes added'}</p>
-        <a href="/events/${event.id}/edit/"><button>Edit</button></a>  <!-- ✅ Takes user to edit page -->
+        <a href="/events/${event.id}/edit/"><button>Edit</button></a>
         <form method="POST" action="/events/${event.id}/delete/" style="margin-top: 10px;">
             {% csrf_token %}
             <button type="submit" style="background-color: red; color: white;">Delete</button>
@@ -80,32 +94,29 @@
     `;
 }
 
-    
-    // Function to enable editing when clicking "Edit"
-    function enableEditing(id, title, date, time, priority, notes) {
-    document.getElementById('event-form').innerHTML = `
-        <h3>Edit Event</h3>
-        <form id="edit-event-form">
-            {% csrf_token %}
-            <input type="hidden" name="event_id" value="${id}">
-            <label>Title:</label><br>
-            <input type="text" id="edit-title" name="title" value="${title}" required><br>
-            <label>Date:</label><br>
-            <input type="date" id="edit-date" name="date" value="${date}" required><br>  <!-- ✅ Added date field -->
-            <label>Time:</label><br>
-            <input type="time" id="edit-time" name="time" value="${time}" required><br>
-            <label>Priority:</label><br>
-            <select id="edit-priority" name="priority">
-                <option value="High" ${priority === "High" ? "selected" : ""}>High</option>
-                <option value="Medium" ${priority === "Medium" ? "selected" : ""}>Medium</option>
-                <option value="Low" ${priority === "Low" ? "selected" : ""}>Low</option>
-            </select><br>
-            <label>Notes:</label><br>
-            <textarea id="edit-notes" name="notes" rows="3" cols="40">${notes}</textarea><br><br>
-            <button type="button" onclick="submitEdit(${id})">Update</button>
-            <button type="button" onclick="showEventDetails({id: ${id}, title: '${title}', start: '${date}', extendedProps: {time: '${time}', priority: '${priority}', notes: '${notes}'}})">Cancel</button>
-        </form>
-    `;
+function updateEventDate(event) {
+    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+    fetch(`/events/${event.id}/update_date/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken  // ✅ Include CSRF token
+        },
+        body: JSON.stringify({'date': event.start.toISOString().split("T")[0]})  // Send new date
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (!data.success) {
+            alert('Error updating event: ' + JSON.stringify(data.error));
+        }
+    })
+    .catch(error => console.error("AJAX Error:", error));
 }
 
 // Function to send the edited event data via AJAX
@@ -117,7 +128,7 @@ function submitEdit(eventId) {
         'time': document.getElementById('edit-time').value,
         'priority': document.getElementById('edit-priority').value,
         'notes': document.getElementById('edit-notes').value,
-        'date': document.getElementById('edit-date').value  // ✅ Added missing date field
+        'date': document.getElementById('edit-date').value  // ✅ Ensure date is sent
     };
 
     fetch(`/events/${eventId}/edit/`, {

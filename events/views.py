@@ -85,9 +85,10 @@ def event_api(request):
     
     for event in events:
         event_list.append({
-            'id': event.id,  # Needed for editing
+            'id': event.id,
             'title': event.title,
-            'start': str(event.date),  # Convert date to string
+            'start': str(event.date),
+            'color': event.color,  # ✅ Add color to API response
             'extendedProps': {
                 'time': str(event.time),
                 'priority': event.priority,
@@ -97,3 +98,24 @@ def event_api(request):
     
     return JsonResponse(event_list, safe=False)
 
+from django.http import JsonResponse
+import json
+
+@login_required
+def update_event_date(request, event_id):
+    event = get_object_or_404(Event, id=event_id, user=request.user)
+
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body.decode("utf-8"))  # Parse JSON request
+            new_date = data.get('date')  # Get the new date from request
+            if new_date:
+                event.date = new_date
+                event.save()
+                return JsonResponse({'success': True})  # ✅ Update successful
+            else:
+                return JsonResponse({'success': False, 'error': 'Invalid date'}, status=400)
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+
+    return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)

@@ -4,11 +4,12 @@ from .models import Event
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['title', 'description', 'date', 'time', 'priority', 'notes']  # Added 'notes'
+        fields = ['title', 'description', 'date', 'time', 'priority', 'notes', 'color']  # Added color field
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
             'time': forms.TimeInput(attrs={'type': 'time'}),
-            'notes': forms.Textarea(attrs={'rows': 3, 'cols': 40})  # Make notes a larger text area
+            'notes': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
+            'color': forms.Select(choices=Event.COLOR_CHOICES)  # Dropdown for color choices
         }
 
 from django import forms
