@@ -16,9 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from events.views import home  # Import the home view
+from django.contrib.auth import views as auth_views
+from events.views import custom_logout
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('events/', include('events.urls')),  
-    path('accounts/', include('django.contrib.auth.urls')),  # Add this
+    path("", home, name="home"),  # Home page route
+    path("admin/", admin.site.urls),
+    path("events/", include("events.urls")),  
+    path("accounts/", include("django.contrib.auth.urls")),  # Authentication routes
+    path("logout/", custom_logout, name="logout"),  # ✅ Uses the custom function
 ]

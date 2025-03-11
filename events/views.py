@@ -119,3 +119,16 @@ def update_event_date(request, event_id):
             return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
 
     return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
+
+from django.shortcuts import render
+
+def home(request):
+    return render(request, "home.html")
+
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
+
+def custom_logout(request):
+    logout(request)
+    return redirect("home")  # ✅ Redirects to home page

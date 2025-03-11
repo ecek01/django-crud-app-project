@@ -70,56 +70,43 @@
         .user-info {
             display: flex;
             align-items: center;
-            gap: 15px;  /* ✅ Added spacing between "Welcome, [user]" and Logout */
+            gap: 15px;
         }
 
-        .btn-custom {
-        border-radius: 25px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        color: var(--primary-color) !important;  /* ✅ Make text pink */
-        border: 2px solid var(--primary-color);  /* ✅ Pink border */
-        background: white;  /* ✅ White background */
-    }
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+            margin: 50px auto;
+        }
 
-    .btn-custom:hover {
-        background: var(--primary-color);  /* ✅ Pink background on hover */
-        color: white !important;  /* ✅ Text turns white on hover */
-    }
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
 
-        /* ✅ Keep Edit button yellow */
-        .btn-edit {
-        background-color: #FFD166 !important;  /* Yellow */
-        color: black !important;  /* Black text */
-        border-radius: 8px;
-        font-weight: bold;
-    }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: #ff7f00;
+            color: white;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
 
-    .btn-edit:hover {
-        background-color: #E6B800 !important;  /* Darker yellow on hover */
-    }
-
-    /* ✅ Keep Delete button red */
-    .btn-delete {
-        background-color: #FF5733 !important;  /* Red */
-        color: white !important;
-        border-radius: 8px;
-        font-weight: bold;
-    }
-
-    .btn-delete:hover {
-        background-color: #CC4422 !important;  /* Darker red on hover */
-    }
-
-    .text-orange {
-        color: #FFBA74 !important;  /* ✅ Softer Orange for Headers */
-    }
-
-    .text-soft-orange {
-        color: #FFD3A6 !important;  /* ✅ Light Orange for Event Titles & Important Info */
-        font-weight: bold;
-    }
-
+        .btn:hover {
+            background-color: #e66c00;
+        }
     </style>
 </head>
 <body>
@@ -135,14 +122,14 @@
                 {% if user.is_authenticated %}
                     <li class="nav-item user-info">
                         <span class="navbar-text text-soft-orange">Welcome, {{ user.username }}</span>
-                        <a class="btn btn-light btn-sm btn-custom" href="{% url 'logout' %}">Logout</a>
+                        <a class="btn btn-light btn-sm" href="{% url 'logout' %}">Logout</a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="btn btn-light btn-sm btn-custom" href="{% url 'login' %}">Login</a>
+                        <a class="btn btn-light btn-sm" href="{% url 'login' %}">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-light btn-sm btn-custom" href="{% url 'register' %}">Register</a>
+                        <a class="btn btn-light btn-sm" href="{% url 'register' %}">Register</a>
                     </li>
                 {% endif %}
             </ul>
@@ -156,7 +143,7 @@
     {% endblock %}
 </div>
 
-<!-- FullCalendar JS (✅ Ensures FullCalendar loads before usage) -->
+<!-- FullCalendar JS -->
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js"></script>
 
