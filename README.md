@@ -12,6 +12,10 @@
 
 <p><a href="https://github.com/ecek01/django-crud-app-project/tree/main">Django Calendar CRUD App GitHub Repo</a></p>
 
+## **Deployment Link**
+
+<p><a href="https://django-calendar-app-p4-05ddabefc58a.herokuapp.com/">Django Calendar CRUD App Deployment Link</a></p>
+
 ## **Timeframe & Working Team**
 
 - **Timeframe**: 2 weeks
